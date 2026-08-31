@@ -215,6 +215,47 @@
   .devnote{max-width:560px;margin:14px auto 0;color:var(--muted);font-size:12px;text-align:center;line-height:1.5}
   @media(max-width:420px){.lhero{padding:34px 20px 28px}.lhero h1{font-size:27px}.stage{padding:26px 20px 22px}
     .lsec,.lcta{padding-left:20px;padding-right:20px}.land{margin:-26px -20px -22px}.flab{font-size:8px}}
+
+  /* ---------- slider ---------- */
+  .sld{margin:26px 0 6px}
+  .sldval{text-align:center;font-size:54px;font-weight:900;letter-spacing:-.045em;line-height:1;
+    background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sldunit{text-align:center;font-size:13px;color:var(--muted);font-weight:600;margin-top:8px}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:99px;
+    background:hsl(230,20%,90%);margin-top:22px;outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:99px;
+    background:var(--accent);border:4px solid #fff;box-shadow:0 3px 12px hsl(244 75% 60% / .45);cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:30px;height:30px;border-radius:99px;background:var(--accent);
+    border:4px solid #fff;box-shadow:0 3px 12px hsl(244 75% 60% / .45);cursor:pointer}
+  .sldends{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-top:9px;font-weight:600}
+  /* ---------- multi select ---------- */
+  .opt.multi .tick{border-radius:99px}
+  .selcount{text-align:center;font-size:12.5px;color:var(--muted);margin-top:14px;font-weight:600}
+  /* ---------- ranking ---------- */
+  .rk{display:flex;align-items:center;gap:13px;padding:14px 16px;border:1px solid var(--line);
+    border-radius:16px;background:var(--card2);cursor:pointer;transition:.16s;font-size:14.5px;
+    line-height:1.35;font-weight:500;margin-bottom:10px}
+  .rk:hover{border-color:hsl(244 75% 60% / .5);background:var(--soft)}
+  .rk.on{border-color:var(--accent);background:var(--soft)}
+  .rk .pos{width:28px;height:28px;border-radius:9px;flex:none;display:grid;place-items:center;
+    font-size:13px;font-weight:800;background:hsl(230,20%,93%);color:var(--muted)}
+  .rk.on .pos{background:var(--accent);color:#fff}
+  /* ---------- guess reveal ---------- */
+  .gcmp{display:flex;gap:12px;margin:18px 0 4px}
+  .gbox{flex:1;border-radius:16px;padding:16px 14px;text-align:center;border:1px solid var(--line)}
+  .gbox.you{background:var(--card)}
+  .gbox.real{background:var(--soft);border-color:hsl(244 75% 60% / .35)}
+  .gbox b{display:block;font-size:32px;font-weight:900;letter-spacing:-.04em;line-height:1}
+  .gbox.real b{color:var(--accent)}
+  .gbox span{display:block;font-size:11px;letter-spacing:.9px;text-transform:uppercase;
+    color:var(--muted);font-weight:700;margin-top:8px}
+  .know{display:flex;align-items:center;gap:14px;background:linear-gradient(160deg,var(--soft),#fff);
+    border:1px solid hsl(244 75% 60% / .3);border-radius:16px;padding:16px;margin-top:14px}
+  .know b{display:block;font-size:15px;letter-spacing:-.01em}
+  .know p{margin:2px 0 0;font-size:13px;color:var(--muted);line-height:1.45}
+  .yrs{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:14px}
+  .yrs b{display:block;font-size:14px;margin-bottom:5px}
+  .yrs p{margin:0;font-size:13.5px;color:var(--muted);line-height:1.5}
 </style>
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-EN5H5ETWTD"></script>
@@ -271,184 +312,192 @@ let step=0;
 /* ================= FUNNEL STAGES ================= */
 const STAGES=[
   {id:'leads', name:'Getting found',           short:'Leads'},
-  {id:'qual',  name:'First reply',             short:'Reply'},
+  {id:'qual',  name:'Who decides',             short:'Who'},
   {id:'pitch', name:'The meeting',             short:'Meeting'},
   {id:'follow',name:'After the meeting',       short:'Follow&#8209;up'},
-  {id:'close', name:'Paying &amp; buying again', short:'Close'},
+  {id:'close', name:'Getting paid',            short:'Close'},
   {id:'team',  name:'Team &amp; information',  short:'Team'}
 ];
 
-/* ================= EDUCATION CONTENT =================
-   Все цифры — из отчётов 2026 года, загруженных клиентом. Источники в поле src.
-   МК = McKinsey Global B2B Pulse 2026 (~4 000 B2B-покупателей, 13 стран, опрос дек. 2025)
-   SF = Salesforce State of Sales, 7th ed. (4 050 продавцов, 22 страны, опрос авг.–сен. 2025)
-   DD = Deloitte Digital, Accelerating sales growth through B2B digital commerce, янв. 2026
-        (530 покупателей + 530 поставщиков, США)
-   FX = FedEx / C Space, B2B business trends 2026 (цитирует Gartner и др.)
-   Кейсы Intch НЕ выдуманы и НЕ добавлены — здесь только внешние исследования.
-   Когда появятся реальные кейсы экспертов, добавлять их сюда же, тэг 'intch'.
-   ==================================================== */
+/* ================= SOURCES =================
+   Все цифры ниже — из публичных исследований. Подпись стоит под каждым экраном.
+   Перед продом подтвердить три ключевые в первоисточнике: RAIN Group (5 против 8 касаний),
+   HockeyStack (27% дисперсии цикла), Gong (план действий, 2.1x).
+   Цифру KPMG про 59 пунктов НЕ используем — встретилась в одном пересказе.
+   =========================================== */
+const SRC={
+  mck:'McKinsey Global B2B Pulse 2026 \u00b7 ~4,000 B2B buyers, 13 countries',
+  sf:'Salesforce State of Sales, 7th edition \u00b7 4,050 sales professionals',
+  dd:'Deloitte Digital, Jan 2026 \u00b7 530 B2B buyers + 530 suppliers, US',
+  fx:'FedEx \u00b7 B2B business trends 2026',
+  gart:'Gartner B2B Buying Survey; Forrester State of Business Buying 2024',
+  rain:'RAIN Group; HockeyStack 2024 pipeline benchmark',
+  cyc:'HockeyStack regression, 54 B2B SaaS companies; Optifai pipeline study, 939 companies',
+  jolt:'Dixon &amp; McKenna, HBR 2022 (The JOLT Effect); Gong, 500,000+ calls; 6sense',
+  intch:'Intch growth research \u00b7 5,365 cases, 30,495 recorded actions'
+};
+
+/* ================= EDUCATION AFTER PROCESS QUESTIONS ================= */
 const EDU={
   leads_source:{
     referrals:{tag:'bench',label:'What the research says',stat:'10',
-      head:'A buyer checks about ten different places before choosing',
-      body:'McKinsey asked around 4,000 B2B buyers how they actually buy. On the way to one decision they pass through roughly ten places — your site, search, a call, a colleague\u2019s opinion, a demo. Referrals put you in one of them. Companies growing fastest are simply present in more of them.',
-      src:'McKinsey Global B2B Pulse 2026 \u00b7 ~4,000 buyers, 13 countries'},
+      head:'A buyer passes through about ten places before choosing',
+      body:'McKinsey asked around 4,000 B2B buyers how they actually buy. On the way to one decision they touch roughly ten places \u2014 your site, search, a call, someone else\u2019s opinion. Referrals put you in one of them. The companies growing fastest are simply present in more.',src:SRC.mck},
     outbound:{tag:'bench',label:'What the research says',stat:'40%',
-      head:'Your reps only spend 40% of the week in front of customers',
-      body:'Salesforce asked 4,050 sales people where their week goes. About 60% of it is not selling \u2014 building lists, typing notes, making quotes. And 47% say their team simply doesn\u2019t have the hours for cold outreach. Cold works, but only if somebody actually has time to do it properly.',
-      src:'Salesforce State of Sales, 7th edition \u00b7 4,050 sales professionals, 22 countries'},
+      head:'Your people only spend 40% of the week in front of customers',
+      body:'The other 60% is lists, notes and quotes. And 47% of sales people say their team has no hours left for cold outreach. Cold works \u2014 but only when someone actually has the time to do it properly.',src:SRC.sf},
     inbound:{tag:'bench',label:'What the research says',stat:'61%',
       head:'Most buyers would rather not talk to a salesperson at all',
-      body:'61% of B2B buyers say they prefer to buy without a rep involved. That is where inbound wins \u2014 people arrive already half-decided. It also means the site has to answer the awkward questions on its own, because nobody is there to answer them for you.',
-      src:'Gartner, cited in FedEx \u00b7 B2B business trends 2026'},
+      body:'61% say they prefer to buy without a rep involved. That is why inbound wins \u2014 people arrive half-decided. It also means your site has to answer the awkward questions alone, because nobody is there to answer them for you.',src:SRC.fx},
     paid:{tag:'bench',label:'What the research says',stat:'+38%',
-      head:'Suppliers added a third more ways to buy in just two years',
-      body:'Deloitte tracked B2B suppliers going from 3.4 to 4.7 ways of buying between 2023 and 2025. The reason is simple: 65% of buyers pick where to buy based on which route is easiest. Ads bring people to the door \u2014 they still leave through whichever door is easiest.',
-      src:'Deloitte Digital, Jan 2026 \u00b7 530 B2B buyers + 530 suppliers, US'},
+      head:'Suppliers added a third more ways to buy in two years',
+      body:'Deloitte tracked B2B suppliers going from 3.4 to 4.7 ways of buying between 2023 and 2025. The reason: 65% of buyers choose where to buy based on which route is easiest. Ads bring people to the door. They still leave through whichever door is easiest.',src:SRC.dd},
     none:{tag:'bench',label:'What the research says',stat:'60% vs 21%',
-      head:'The gap between growing and stalling companies is now huge',
-      body:'McKinsey compared companies gaining market share with those losing it. 60% of the winners reported double-digit revenue growth last year, against 21% of the rest. The difference was not the market \u2014 it was having a system instead of a scramble. One channel that works beats four that sometimes do.',
-      src:'McKinsey Global B2B Pulse 2026 \u00b7 ~4,000 buyers, 13 countries'}
+      head:'The gap between growing and stalling is now enormous',
+      body:'60% of the companies gaining market share reported double-digit revenue growth last year, against 21% of the rest. The difference was not the market. It was having a system instead of a scramble. One channel that works beats four that sometimes do.',src:SRC.mck}
   },
-  leads_selfserve:{
-    hi:{tag:'bench',label:'What the research says',stat:'73%',
-      head:'Even big orders now get placed without a phone call',
-      body:'In 2022, 59% of B2B buyers were comfortable spending over $50,000 online. Today it is 73%. Letting people see prices and availability without asking is no longer a small-order feature \u2014 and you already do it.',
-      src:'McKinsey Global B2B Pulse 2026 \u00b7 ~4,000 buyers, 13 countries'},
-    lo:{tag:'bench',label:'What the research says',stat:'75%',
-      head:'Making people ask is now a reason to leave',
-      body:'85% of B2B buyers ran into problems trying to order online, and 75% say they would switch supplier for a better experience. McKinsey found the single biggest reason buyers drop a supplier is getting different answers from different people about price, availability and delivery times.',
-      src:'FedEx \u00b7 B2B business trends 2026; McKinsey Global B2B Pulse 2026'}
-  },
-  qual_criteria:{
-    hi:{tag:'bench',label:'What the research says',stat:'#2',
-      head:'Deciding who is worth a meeting is the job everyone is automating first',
-      body:'Deloitte asked B2B companies what they hand to AI first. After chatbots, the answer is sorting which leads deserve attention. None of that works without a written rule about who counts \u2014 which you already have.',
-      src:'Deloitte Digital, Jan 2026 \u00b7 530 suppliers, US'},
-    lo:{tag:'bench',label:'What the research says',stat:'60%',
-      head:'Six in ten hours of your reps\u2019 week never reach a customer',
-      body:'Salesforce found sales people spend about 60% of the week not selling. When there is no written rule about who earns a meeting, the small amount of selling time left goes to people who were never going to buy \u2014 and the calendar looks busy while nothing closes.',
-      src:'Salesforce State of Sales, 7th edition \u00b7 4,050 sales professionals'}
-  },
-  qual_speed:{
-    hi:{tag:'bench',label:'What the research says',stat:'52%',
-      head:'Being reachable is now a top-two reason buyers stay',
-      body:'McKinsey asked 4,000 buyers what would make them stop working with a supplier. Two answers tied for first, both at 52%: getting different answers from different people, and not being able to reach anyone who knows the answer or can make a decision.',
-      src:'McKinsey Global B2B Pulse 2026 \u00b7 ~4,000 buyers, 13 countries'},
-    lo:{tag:'bench',label:'What the research says',stat:'47%',
-      head:'Being passed around loses you the deal on its own',
-      body:'47% of buyers say being transferred between people before anyone helps is enough reason to walk away. 51% say the same about not being able to move between email, phone and the website without repeating themselves. This is not about being polite \u2014 it decides who they buy from.',
-      src:'McKinsey Global B2B Pulse 2026 \u00b7 ~4,000 buyers, 13 countries'}
-  },
-  pitch_tailor:{
-    hi:{tag:'bench',label:'What the research says',stat:'4\u00d7',
-      head:'Real tailoring is what separates the winners from everyone else',
-      body:'More than 90% of companies say they personalise something. But only 20% of market leaders \u2014 and 5% of the companies losing share \u2014 actually build the conversation around one specific customer. That four-times gap is one of the three things McKinsey found separating winners from the rest.',
-      src:'McKinsey Global B2B Pulse 2026 \u00b7 ~4,000 buyers, 13 countries'},
-    lo:{tag:'bench',label:'What the research says',stat:'50%',
-      head:'Half of buyers will leave over a pitch that isn\u2019t about them',
-      body:'50% of buyers say a sales conversation that isn\u2019t tailored to their business is reason enough to stop working with a supplier. And 87% say they will pay more when it is. The same deck for everyone is not neutral \u2014 it costs money in both directions.',
-      src:'McKinsey Global B2B Pulse 2026; FedEx \u00b7 B2B business trends 2026'}
+  dmu_roles:{
+    hi:{tag:'bench',label:'What the research says',stat:'17%',
+      head:'You will spend 17% of their buying time with them. The rest happens without you',
+      body:'A complex B2B purchase usually involves 6 to 10 people, each arriving with four or five things they found on their own. Buyers spend only 17% of the whole process meeting suppliers \u2014 and that slice is split between you and everyone else they are considering. The other 83% is your supporter defending you inside, without you in the room. Deals where three or more people are actively involved close 2.4 times faster.',src:SRC.gart},
+    lo:{tag:'bench',label:'What the research says',stat:'6\u201310',
+      head:'You are probably selling to one person in a room of six',
+      body:'A complex B2B purchase usually involves 6 to 10 people, each arriving with four or five things they researched alone. For deals above $50k the average is 11. Deals where three or more of them are actively involved close 2.4 times faster than single-threaded ones. This is not about pushing harder \u2014 it is about knowing who those people are and giving your supporter something to defend you with.',src:SRC.gart}
   },
   pitch_proof:{
     hi:{tag:'bench',label:'What the research says',stat:'69%',
       head:'Buyers want the maths, and they want it more than last year',
-      body:'69% of sales professionals say proof of money back matters more to their customers than it did a year ago, and 67% say customers now need a lot of explaining before they will buy. Bringing their numbers into the room is what you are already doing right.',
-      src:'Salesforce State of Sales, 7th edition \u00b7 4,050 sales professionals'},
+      body:'69% of sales professionals say proof of money back matters more to their customers than a year ago, and 67% say customers now need real explaining before they will buy. Bringing their numbers into the room is what you are already doing right.',src:SRC.sf},
     lo:{tag:'bench',label:'What the research says',stat:'67%',
-      head:'Buyers need teaching before they will buy \u2014 features don\u2019t teach',
-      body:'67% of sales professionals say their customers now require extensive education before deciding, and 69% say proof of money back matters more than a year ago. A pitch built on what your product does answers a question the buyer isn\u2019t asking.',
-      src:'Salesforce State of Sales, 7th edition \u00b7 4,050 sales professionals'}
-  },
-  follow_next:{
-    hi:{tag:'bench',label:'What the research says',stat:'57%',
-      head:'Decisions are slower now \u2014 the follow-up is what holds them together',
-      body:'57% of sales professionals say customers take longer to decide than they used to. A longer decision is survivable if there is a date in the diary and a written summary of what was agreed. Without those, a slow decision quietly becomes no decision.',
-      src:'Salesforce State of Sales, 7th edition \u00b7 4,050 sales professionals'},
-    lo:{tag:'bench',label:'What the research says',stat:'57%',
-      head:'This is where most of your money is leaking',
-      body:'57% of sales professionals say buyers take longer to decide than they used to. If nothing is agreed before the call ends, that extra time gets filled by whoever does follow up \u2014 usually not you. Nothing about your product or price needs to change to fix this.',
-      src:'Salesforce State of Sales, 7th edition \u00b7 4,050 sales professionals'}
+      head:'Buyers need teaching before they buy. Features do not teach',
+      body:'67% of sales professionals say their customers require serious explaining before deciding, and 69% say proof of money back matters more than a year ago. A pitch built on what your product does answers a question the buyer is not asking.',src:SRC.sf}
   },
   follow_obj:{
     hi:{tag:'bench',label:'What the research says',stat:'26%',
-      head:'Only a quarter of companies practise these conversations',
-      body:'Just 26% of sales teams run practice sessions, 41% of reps say they don\u2019t get enough practice before real calls, and 52% say the training they do get doesn\u2019t give them the skills they need. Writing the answers down and rehearsing them puts you in a small group.',
-      src:'Salesforce State of Sales, 7th edition \u00b7 4,050 sales professionals'},
-    lo:{tag:'bench',label:'What the research says',stat:'46%',
-      head:'Almost half of reps never hear how their calls went',
-      body:'46% of sales reps rarely get feedback on their sales conversations, and 52% say courses and guides don\u2019t give them the skills they need. Objections don\u2019t get handled better by hoping. They get handled better when the five most common ones have written answers the team has practised out loud.',
-      src:'Salesforce State of Sales, 7th edition \u00b7 4,050 sales professionals'}
+      head:'Only a quarter of companies ever practise these conversations',
+      body:'Just 26% of sales teams run practice sessions, 41% of reps say they do not get enough practice before real calls, and 52% say the training they get does not give them the skills they need. Writing the answers down and rehearsing them puts you in a small group.',src:SRC.sf},
+    lo:{tag:'intch',label:'Intch growth research',stat:'+38%',
+      head:'The cheapest fix in the whole funnel',
+      body:'Across 5,365 cases of work done to grow a business, writing down the objections that repeat and giving the team one good answer each carries a typical gain of 38%. At Amazon Business, scripts and objection handling built from real project insight led to targets being beaten twice over. It costs a morning.',src:SRC.intch}
   },
-  close_cr:{
-    hi:{tag:'bench',label:'What the research says',stat:'35%',
-      head:'Only a third of sales people expect to hit their number',
-      body:'35% of sales professionals expect to reach or beat their target this year. That is a big jump from 16% a year earlier, but it is still a minority \u2014 and you are on the right side of it.',
-      src:'Salesforce State of Sales, 7th edition \u00b7 4,050 sales professionals'},
-    lo:{tag:'bench',label:'What the research says',stat:'13%',
-      head:'Buyers quietly decide against you before price ever comes up',
-      body:'Deloitte asked suppliers how many bids they lose purely because dealing with them is awkward: 13%. Buyers confirmed it from their side \u2014 they spend 29% more with the suppliers who are easy to work with. If you don\u2019t measure this number, that is the first thing to fix: you can\u2019t improve what you can\u2019t see.',
-      src:'Deloitte Digital, Jan 2026 \u00b7 530 B2B buyers + 530 suppliers, US'}
-  },
-  close_repeat:{
-    hi:{tag:'bench',label:'What the research says',stat:'+36%',
-      head:'An easy experience is worth about a third more revenue',
-      body:'Suppliers estimate that a good buying experience lifts revenue by 36%. Buyers put a similar number on it from their side: they spend 29% more with suppliers who make it easy. Having someone own what happens after the first order is where that money comes from.',
-      src:'Deloitte Digital, Jan 2026 \u00b7 530 B2B buyers + 530 suppliers, US'},
-    lo:{tag:'bench',label:'What the research says',stat:'52%',
-      head:'People rarely leave over price. They leave over friction',
-      body:'The two most common reasons buyers stop working with a supplier, both at 52%: different people give different answers, and nobody who can actually help is reachable. Price is not in the top three. Repeat orders are usually lost to admin, not to a competitor.',
-      src:'McKinsey Global B2B Pulse 2026 \u00b7 ~4,000 buyers, 13 countries'}
-  },
-  team_coach:{
-    hi:{tag:'bench',label:'What the research says',stat:'75%',
-      head:'Coaching is the thing reps say makes the biggest difference',
-      body:'75% of sales reps say they are more likely to hit their number when they have a coach or mentor. Top performers are also 3.2 times more likely than the weakest to take part in a sales community outside their own company \u2014 they keep learning from people who aren\u2019t their manager.',
-      src:'Salesforce State of Sales, 7th edition \u00b7 4,050 sales professionals'},
-    lo:{tag:'bench',label:'What the research says',stat:'40%',
-      head:'The blocker isn\u2019t willingness. It\u2019s the manager\u2019s calendar',
-      body:'40% of reps say the main thing stopping them getting better is that their manager has no time. 46% rarely get feedback on their calls. Meanwhile 75% say a coach makes them more likely to hit their number. One scheduled hour a week moves this more than any new tool.',
-      src:'Salesforce State of Sales, 7th edition \u00b7 4,050 sales professionals'}
+  cycle_len:{
+    any:{tag:'bench',label:'What the research says',stat:'27%',
+      head:'Your cycle length is mostly your process, not your market',
+      body:'The median B2B cycle is 84 days and has grown 22% since 2022. But when researchers ran the numbers across 54 companies, deal size explained only about 27% of why some cycles are long and others short. The other 73% is process, buyer intent and data quality. One measurable example: deals where the proposal goes out within 24 hours of the meeting close 35% faster.',src:SRC.cyc},
+    unknown:{tag:'bench',label:'What the research says',stat:'84 days',
+      head:'The number matters less than not having one',
+      body:'The median B2B cycle is 84 days: under 30 days for small deals, 90 to 180 for large ones. Without a normal for your own business you cannot tell a deal that is simply taking its time from one that is already dead \u2014 so the team keeps carrying both. And deal size explains only 27% of why cycles run long. The rest is how you run them.',src:SRC.cyc}
   },
   team_data:{
     hi:{tag:'bench',label:'What the research says',stat:'6.3%',
-      head:'Companies with joined-up information beat their targets by twice as much',
-      body:'Deloitte found that companies where sales, service and back-office information are actually connected beat their annual sales goals by 6.3% \u2014 roughly twice the margin of everyone else. They are also four times more likely to say customers find them easy to deal with.',
-      src:'Deloitte Digital, Jan 2026 \u00b7 530 suppliers, US'},
+      head:'Joined-up companies beat their targets by twice as much',
+      body:'Companies where sales, service and back-office information are actually connected beat their annual sales goals by 6.3% \u2014 roughly twice the margin of everyone else. They are also four times more likely to say customers find them easy to deal with.',src:SRC.dd},
     lo:{tag:'bench',label:'What the research says',stat:'8',
       head:'The average sales team is juggling eight separate tools',
-      body:'Only a third of teams work in one system. The rest average eight tools, and 42% of reps say that is too many. 46% say bad or duplicated information is directly costing them sales. The strongest performers are 1.5 times more likely to be cleaning theirs up.',
-      src:'Salesforce State of Sales, 7th edition \u00b7 4,050 sales professionals'}
+      body:'Only a third of teams work in one system. The rest average eight, and 42% of reps say that is too many. 46% say bad or duplicated information is directly costing them sales. The strongest performers are 1.5 times more likely to be cleaning theirs up.',src:SRC.sf}
   }
 };
 
-/* ================= QUESTIONS (6 stages \u00d7 2) ================= */
+/* ================= GUESS QUESTIONS (guess \u2192 reveal) ================= */
+const GUESS={
+  guess_easy:{
+    s:0,kind:'slider',min:0,max:10,unit:'out of 10 buyers',actual:5,
+    title:'Out of 10 buyers, how many would say it is easy to buy from a company like yours?',
+    sub:'Your best guess. We will show you the real number.',
+    youLbl:'Your guess',realLbl:'Reality',
+    fmtYou:function(v){return v},fmtReal:function(){return '4.7'},
+    head:'Suppliers and buyers do not see the same company',
+    body:'72% of suppliers say their sales process is mostly or highly automated. Only 47% of buyers agree \u2014 and buyers are six times more likely to call the process mostly manual, three times more likely to say it is hard to do business with them. Nobody is lying. From inside your own company the friction is invisible.',
+    src:SRC.dd,
+    score:function(g){return Math.max(0,100-Math.abs(g-5)*20)}
+  },
+  guess_walkaway:{
+    s:2,kind:'choice',
+    title:'What makes B2B buyers walk away from a supplier most often?',
+    sub:'Pick what you think comes first.',
+    choices:[{v:'price',t:'Price'},{v:'slow',t:'Slow delivery or long lead times'},
+      {v:'incons',t:'Different people give them different answers'},{v:'product',t:'The product is not good enough'}],
+    correct:'incons',
+    head:'Price is not even in the top three',
+    body:'Two answers tie for first at 52%: different people in the company give different answers on price, availability and timing, and the buyer cannot reach anyone who actually knows or can decide. 50% will leave over a sales conversation that is not about their business. Price does not appear until much further down.',
+    src:SRC.mck,
+    score:function(v){return v==='incons'?100:(v==='product'?30:20)}
+  },
+  guess_touches:{
+    s:3,kind:'slider',min:0,max:12,unit:'follow-ups',actual:8,
+    title:'How many times do you reach out to a buyer before they respond or decide?',
+    sub:'Your honest number, not the one you wish it was.',
+    youLbl:'You',realLbl:'Average',
+    fmtYou:function(v){return v},fmtReal:function(){return '8'},
+    head:'It is not about more follow-ups. It is about better ones',
+    body:'It takes 8 touches on average to get a first meeting. But the best sellers do it in 5 and convert 52%, while average sellers do 8 and convert 19%. Fewer touches, three times the result. What separates them: each message carries one new idea, the first five days hold about half of all contact, and a message triggered by something real \u2014 a new hire, a funding round, a job change \u2014 converts three to five times better than the same message sent on a schedule.',
+    src:SRC.rain,
+    score:function(g){return g>=5&&g<=9?100:(g>=3&&g<=11?60:20)}
+  },
+  win_factors:{
+    s:4,kind:'rank',pick:3,
+    title:'What most often decides a WIN in your niche?',
+    sub:'Number your top three, 1 being the strongest.',
+    choices:[
+      {v:'champion',t:'Someone inside their company pushed it through',w:100},
+      {v:'signer',t:'We reached the person who actually signs',w:95},
+      {v:'consist',t:'They got the same answer from everyone they asked',w:90},
+      {v:'money',t:'We showed the money back in their own numbers',w:85},
+      {v:'easy',t:'Buying from us was easy \u2014 quote, invoice, no chasing',w:80},
+      {v:'budget',t:'Their budget window happened to open',w:40},
+      {v:'price',t:'Our price',w:30}
+    ],
+    head:'Half of your lost deals were never lost to a competitor',
+    body:'Between 40% and 60% of qualified B2B deals end in no decision at all. And in most of those, the buyer did not love their current situation \u2014 they were afraid of choosing wrong. Price does not fix fear. A written plan does: who does what, by when. Deals with one close at 2.1 times the rate. And 94% of buying groups have already ranked their shortlist before they contact anyone; whoever sits first wins about 80% of the time. By the time you start selling, much of it was decided by what you knew about them beforehand.',
+    src:SRC.jolt,
+    score:function(order){
+      var mul=[1,.7,.4],got=0,i,c;
+      for(i=0;i<order.length&&i<3;i++){c=this.choices.filter(function(x){return x.v===order[i]})[0];if(c)got+=c.w*mul[i];}
+      return Math.round(Math.min(100,got/202.5*100));
+    }
+  },
+  guess_selling:{
+    s:5,kind:'slider',min:0,max:100,unit:'% of the week',actual:40,
+    title:'What share of a salesperson\u2019s week is actually spent with customers?',
+    sub:'Across the whole market, not just your team.',
+    youLbl:'Your guess',realLbl:'Reality',
+    fmtYou:function(v){return v+'%'},fmtReal:function(){return '40%'},
+    head:'This is why hiring stopped working',
+    body:'Only about 40% of a sales week is spent with customers. The rest is lists, notes and quotes. Across 5,365 cases of growth work, hiring more salespeople fell from 19% of the work in 2020 to 9% in 2025 and dropped out of the twenty most-used plays entirely. Every new person walks into the same process and also spends less than half their week selling.',
+    src:SRC.sf+' \u00b7 '+SRC.intch,
+    score:function(g){return Math.max(0,100-Math.abs(g-40)*2.5)}
+  }
+};
+
+/* ================= PROCESS QUESTIONS (12, two per stage) ================= */
 const Q=[
  {s:0,key:'leads_source',title:'Where do most of your leads come from today?',sub:'Pick the one that brings the most',
   choices:[{v:'referrals',t:'People I know \u2014 referrals and my own network',p:25},
    {v:'outbound',t:'We go out and find them \u2014 cold email, LinkedIn, calls',p:40},
    {v:'inbound',t:'They find us \u2014 website, search, content',p:40},
    {v:'paid',t:'Paid ads',p:30},
-   {v:'none',t:'It varies month to month \u2014 no steady source',p:5}], eduBy:'leads_source'},
+   {v:'none',t:'It varies month to month \u2014 no steady source',p:5}],eduBy:'leads_source'},
  {s:0,key:'leads_selfserve',title:'Can a buyer find your prices and delivery times without talking to anyone?',sub:'',
-  choices:[{v:'all',t:'Yes \u2014 it\u2019s all on our site',p:50},
+  choices:[{v:'all',t:'Yes \u2014 it is all on our site',p:50},
    {v:'some',t:'Some of it \u2014 the rest they have to ask',p:28},
    {v:'none',t:'No \u2014 they have to contact us first',p:8}]},
- {s:1,key:'qual_criteria',title:'How does someone earn a meeting with your team?',sub:'',
-  choices:[{v:'rules',t:'We have written rules and everyone applies them',p:50},
-   {v:'judgement',t:'Each person decides for themselves',p:25},
-   {v:'anyone',t:'Anyone who replies gets a meeting',p:8}]},
- {s:1,key:'qual_speed',title:'When a new enquiry arrives, how fast does someone who can actually answer get to it?',sub:'Not just any reply \u2014 someone who knows and can decide',
-  choices:[{v:'sameday',t:'Same day, and they can answer properly',p:50},
-   {v:'days',t:'Within a day or two',p:28},
-   {v:'depends',t:'Depends who\u2019s around that week',p:12},
-   {v:'passed',t:'It usually gets passed between people first',p:5}]},
+ {s:1,key:'stall_owner',title:'When a deal stalls, do you know whose desk it is sitting on?',sub:'',
+  choices:[{v:'name',t:'Yes \u2014 I know the person and what they need',p:50},
+   {v:'role',t:'I know the role, not the person',p:30},
+   {v:'ask',t:'We find out by asking our contact',p:14},
+   {v:'late',t:'We usually find out once it is too late',p:4}]},
+ {s:1,key:'dmu_roles',type:'multi',title:'Who has to agree before you get paid?',
+  sub:'Tick every role involved, even occasionally.',
+  choices:[{v:'owner',t:'Owner or CEO'},{v:'finance',t:'Finance'},
+   {v:'head',t:'Head of the team that will use it'},{v:'proc',t:'Procurement'},
+   {v:'it',t:'IT or security'},{v:'legal',t:'Legal'},{v:'user',t:'The end user'},
+   {v:'solo',t:'One person decides alone',solo:true}],
+  bands:[{n:0,p:5},{n:1,p:22},{n:2,p:38},{n:3,p:50}]},
  {s:2,key:'pitch_tailor',title:'How much of your pitch is about their business rather than your product?',sub:'',
   choices:[{v:'built',t:'We rebuild it around what we know about them',p:50},
    {v:'swapped',t:'Same deck, we swap a few slides',p:28},
    {v:'same',t:'Same pitch for everyone',p:8}]},
- {s:2,key:'pitch_proof',title:'Do you show buyers the maths \u2014 what they\u2019d save or earn?',sub:'',
+ {s:2,key:'pitch_proof',title:'Do you show buyers the maths \u2014 what they would save or earn?',sub:'',
   choices:[{v:'their',t:'Yes \u2014 we build the case using their own numbers',p:50},
    {v:'typical',t:'We mention typical results from other clients',p:28},
    {v:'features',t:'We mostly talk about what our product does, and price',p:8}]},
@@ -457,24 +506,26 @@ const Q=[
    {v:'days',t:'We send a follow-up within a few days',p:28},
    {v:'remember',t:'Whoever ran the call follows up when they remember',p:10},
    {v:'nothing',t:'Usually nothing \u2014 we wait for them',p:3}]},
- {s:3,key:'follow_obj',title:'They say \u201cit\u2019s too expensive\u201d or \u201cI need to think\u201d. Then what?',sub:'',
+ {s:3,key:'follow_obj',title:'They say \u201cit is too expensive\u201d or \u201cI need to think\u201d. Then what?',sub:'',
   choices:[{v:'written',t:'We have written answers and the team has practised them',p:50},
    {v:'improvise',t:'The experienced ones handle it, results vary',p:25},
-   {v:'dies',t:'That\u2019s usually where the deal dies',p:5}]},
- {s:4,key:'close_cr',title:'Out of 10 first meetings, how many end up paying?',sub:'',
-  choices:[{v:'4plus',t:'4 or more',p:50},{v:'2-3',t:'2\u20133',p:38},{v:'1',t:'About 1',p:20},
-   {v:'lt1',t:'Fewer than 1',p:8},{v:'nm',t:'I\u2019ve never counted',p:5}]},
+   {v:'dies',t:'That is usually where the deal dies',p:5}]},
+ {s:4,key:'cycle_len',title:'How long from the first meeting to the payment?',sub:'',
+  choices:[{v:'week',t:'Within a week',p:45},{v:'2-4',t:'Two to four weeks',p:50},
+   {v:'1-2m',t:'One to two months',p:42},{v:'3m',t:'Three months or more',p:30},
+   {v:'never',t:'I have never counted',p:6}]},
  {s:4,key:'close_repeat',title:'After someone has paid once, what makes them buy again?',sub:'',
   choices:[{v:'owned',t:'We have a plan for it and someone is responsible',p:50},
    {v:'touch',t:'We stay in touch when we get the chance',p:25},
    {v:'wait',t:'We wait for them to come back',p:8},
-   {v:'rare',t:'Most don\u2019t come back',p:3}]},
+   {v:'rare',t:'Most do not come back',p:3}]},
  {s:5,key:'team_coach',title:'How do your sales people actually get better?',sub:'',
   choices:[{v:'weekly',t:'A set time every week to listen back and give feedback',p:50},
    {v:'sometimes',t:'We talk it through when something goes wrong',p:28},
    {v:'courses',t:'Courses and materials, but no one-to-one feedback',p:14},
    {v:'none',t:'They figure it out on the job',p:5}]},
- {s:5,key:'team_data',title:'Where does information about your customers live?',sub:'Who said what, what was promised, what stage the deal is at',
+ {s:5,key:'team_data',title:'Where does information about your customers live?',
+  sub:'Who said what, what was promised, what stage the deal is at',
   choices:[{v:'one',t:'One system everyone uses',p:50},
    {v:'plus',t:'One system plus a few spreadsheets',p:30},
    {v:'sheets',t:'Spreadsheets and people\u2019s inboxes',p:10},
@@ -484,40 +535,47 @@ const Q=[
 /* ================= DIAGNOSIS PER BOTTLENECK ================= */
 const DIAG={
   leads:{h:'Not enough of the right people ever reach you',
-    p:'Everything further down may work fine \u2014 you just don\u2019t send enough people into it to know. Buyers now pass through around ten places before they choose a supplier, and 61% would rather get their answers without speaking to anyone at all. Until they can find you and find out, every number below this is noise.',
-    f:['Pick one channel and make it repeatable before adding a second','Put prices, availability and delivery times where a buyer can see them without asking','Count meetings produced per channel, not clicks or impressions']},
-  qual:{h:'People reach you, and then wait',
-    p:'The two most common reasons buyers walk away from a supplier are both about this moment: getting different answers from different people, and not being able to reach anyone who actually knows or can decide. Each was named by 52% of buyers. Nearly half say being passed around is enough on its own.',
-    f:['Write 4\u20136 yes/no rules for who earns a meeting, so everyone applies the same ones','Make sure the first reply comes from someone who can answer, not just acknowledge','Agree one set of answers on price, availability and timing that everyone gives']},
+    p:'Buyers now pass through around ten places before choosing a supplier, and 61% would rather get their answers without speaking to anyone. Until they can find you and find out, everything below this is guesswork.',
+    f:['Pick one channel and make it repeatable before adding a second','Put prices, availability and delivery times where a buyer can see them without asking','Count meetings produced per channel, not clicks']},
+  qual:{h:'You are selling to one person in a room of six',
+    p:'A B2B purchase usually involves 6 to 10 people, and you will spend only 17% of their buying time in front of any of them. The rest happens in rooms you are not in. Deals where three or more people are actively involved close 2.4 times faster.',
+    f:['Write down every role that has to agree, per deal, before the second meeting','Give your supporter something to defend you with when you are not there','Make the first reply come from someone who can answer, not just acknowledge']},
   pitch:{h:'The meeting is where you lose them',
-    p:'Half of buyers say a pitch that isn\u2019t built around their business is reason enough to leave, and 87% say they\u2019ll pay more when it is. Meanwhile 67% now need real explaining before they will buy. If every meeting is run differently, you can never tell whether a lost deal was a weak pitch or a weak week.',
-    f:['Build the pitch around their numbers \u2014 what they save or earn \u2014 not your features','Agree one call structure: questions first, tailored pitch second','Record calls and listen back to two per person each week']},
+    p:'Half of buyers say a pitch that is not built around their business is reason enough to leave, and 87% say they will pay more when it is. 67% now need real explaining before they buy. If every meeting runs differently, you cannot tell a weak pitch from a weak week.',
+    f:['Build the pitch around their numbers, not your features','Agree one call structure: questions first, tailored pitch second','Record calls and listen back to two per person each week']},
   follow:{h:'Everything drops after the meeting',
-    p:'Your people are getting in front of the right buyers and losing them in the gap that follows. 57% of sales professionals say customers take longer to decide than they used to \u2014 which is survivable only if a date and a written summary exist before the call ends. This is the cheapest leak in your funnel to close: it needs process, not talent, and it touches neither your product nor your price.',
-    f:['Agree the next date on the call itself \u2014 never end with \u201cI\u2019ll send something over\u201d','Send a written summary the same day: what was agreed, who does what, by when','Write answers to your five most common objections and practise them out loud \u2014 only 26% of companies do']},
-  close:{h:'Deals stall at the end, and buyers quietly don\u2019t come back',
-    p:'Suppliers lose about 13% of bids purely because dealing with them is awkward, and buyers say they spend 29% more with the ones who make it easy. Price is not among the top three reasons people leave \u2014 inconsistent answers and being unable to reach anyone are.',
-    f:['Make the last mile easy: quote, invoice and payment without anyone chasing','Find out who signs and by when, no later than the second conversation','Give one person responsibility for the second order, with a date in the diary']},
-  team:{h:'You have a sales team you can\u2019t steer',
-    p:'You are managing the result rather than the causes, so a bad month arrives as news. 40% of reps say the thing blocking them from improving is that their manager has no time, and 46% say bad or scattered information is costing them sales directly. Meanwhile 75% say a coach makes them more likely to hit their number.',
+    p:'It takes about 8 touches to move a buyer, but the best do it in 5 and convert 52% against 19%. The difference is not effort \u2014 it is that each message carries one new idea and lands on a real trigger. Fixing this needs process, not talent, and touches neither your product nor your price.',
+    f:['Agree the next date on the call itself \u2014 never end with \u201cI will send something over\u201d','Send a written summary the same day: what was agreed, who does what, by when','Write answers to your five most common objections and practise them out loud']},
+  close:{h:'Deals stall at the end, and buyers quietly do not come back',
+    p:'Between 40% and 60% of qualified deals end in no decision. Most of those buyers were not loyal to their current situation \u2014 they were afraid of choosing wrong. Deals with a written plan of who does what by when close at 2.1 times the rate.',
+    f:['Agree a written plan with dates and owners before the proposal goes out','Send the proposal within 24 hours of the meeting \u2014 those deals close 35% faster','Give one person responsibility for the second order, with a date']},
+  team:{h:'You have a sales team you cannot steer',
+    p:'Only about 40% of a sales week reaches a customer. 40% of reps say what blocks them is their manager having no time, and 46% say scattered information is costing them sales. Hiring into that does not fix it \u2014 which is why hiring more sellers fell from 19% of growth work in 2020 to 9% in 2025.',
     f:['Book one fixed hour a week per person to listen back and give feedback','Get customer information into one place \u2014 who said what, what was promised, what stage','Review what happens between each stage weekly, not just the revenue total']},
   none:{h:'No single stage is breaking',
-    p:'Every stage scores well, which puts you in rare company: McKinsey found 60% of market leaders growing revenue by double digits against 21% of everyone else, and that gap comes from exactly this kind of consistency. Your ceiling now is volume and how many people can run the process without you.',
-    f:['Add a second way for buyers to find you and hold your close rate steady while volume grows','Hire against the process you already have and measure how fast new people get productive','Set a target for each stage so a slip shows up in a week, not a quarter']}
+    p:'Every stage scores well, which is rare: 60% of market leaders grew revenue by double digits last year against 21% of everyone else, and that gap comes from exactly this kind of consistency. Your ceiling now is volume, and how many people can run this without you.',
+    f:['Add a second way for buyers to find you and hold your close rate while volume grows','Hire against the process you already have and measure how fast new people get productive','Set a target per stage so a slip shows up in a week, not a quarter']}
+};
+
+/* ================= YEARS IN NICHE \u2014 no score, this is the compliment ================= */
+const YEARS={
+  lt1:'You are early. The founders who get past the first ceiling fastest are usually the ones who borrow the pattern instead of discovering it \u2014 someone who has already run this cycle in your niche.',
+  '1-2':'Two years in, you know your product. What takes longer to learn is how buyers in your niche actually decide \u2014 and that knowledge is worth more than any tool you could buy this year.',
+  '3-7':'Several years in this niche is real knowledge. The question is whether it lives in a process your team can run, or only in your head.',
+  '8+':'Eight years in one niche is knowledge most of your competitors do not have. The problem is not the knowledge \u2014 it is that it lives in your head rather than in a process. Which is why selling still depends on you.'
 };
 
 /* ================= HELPERS ================= */
-function funnelRail(activeStage,qIndex){
-  const W=520,GAP=6,N=6,sw=(W-GAP*(N-1))/N,H0=62,H1=22,CY=35;
-  let segs='';
-  for(let i=0;i<N;i++){
-    const x0=i*(sw+GAP),x1=x0+sw;
-    const h0=H0-(H0-H1)*(x0/W),h1=H0-(H0-H1)*(x1/W);
-    const st=i<activeStage?'done':(i===activeStage?'now':'todo');
+function funnelRail(activeStage,qIndex,qTotal){
+  var W=520,GAP=6,N=6,sw=(W-GAP*(N-1))/N,H0=62,H1=22,CY=35,segs='',i;
+  for(i=0;i<N;i++){
+    var x0=i*(sw+GAP),x1=x0+sw;
+    var h0=H0-(H0-H1)*(x0/W),h1=H0-(H0-H1)*(x1/W);
+    var st=i<activeStage?'done':(i===activeStage?'now':'todo');
     segs+='<polygon class="fseg '+st+'" points="'+x0+','+(CY-h0/2)+' '+x1+','+(CY-h1/2)+' '+x1+','+(CY+h1/2)+' '+x0+','+(CY+h0/2)+'"/>';
   }
-  const labs=STAGES.map(function(s,i){
-    const st=i<activeStage?'done':(i===activeStage?'now':'');
+  var labs=STAGES.map(function(s,i){
+    var st=i<activeStage?'done':(i===activeStage?'now':'');
     return '<div class="flab '+st+'">'+s.short+'</div>';
   }).join('');
   return '<div class="frail">'+
@@ -528,175 +586,291 @@ function funnelRail(activeStage,qIndex){
         '<feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="hsl(244,75%,60%)" flood-opacity=".45"/></filter></defs>'+
       segs+'</svg>'+
     '<div class="flabs">'+labs+'</div>'+
-    '<div class="fmeta"><b>Stage '+(activeStage+1)+' \u00b7 '+STAGES[activeStage].name+'</b><span>Question '+qIndex+' of '+Q.length+'</span></div>'+
+    '<div class="fmeta"><b>Stage '+(activeStage+1)+' \u00b7 '+STAGES[activeStage].name+'</b><span>Question '+qIndex+' of '+qTotal+'</span></div>'+
   '</div>';
 }
+function enable(on){var b=document.getElementById('cont');if(b)b.disabled=!on;}
 function choose(el,key,v,p){
-  A[key]=v; A[key+'_p']=p;
-  const box=el.closest('.opts'); if(box) box.querySelectorAll('.opt').forEach(function(o){o.classList.remove('sel')});
-  el.classList.add('sel');
-  const b=document.getElementById('cont'); if(b) b.disabled=false;
+  A[key]=v;A[key+'_p']=p;
+  var box=el.closest('.opts');if(box)box.querySelectorAll('.opt').forEach(function(o){o.classList.remove('sel')});
+  el.classList.add('sel');enable(true);
 }
-function qScreen(item){
-  const sel=A[item.key];
-  const opts=item.choices.map(function(c){
-    return '<div class="opt '+(sel===c.v?'sel':'')+'" onclick="choose(this,\''+item.key+'\',\''+c.v+'\','+c.p+')">'+
+function optList(key,choices,cls){
+  var sel=A[key];
+  return '<div class="opts">'+choices.map(function(c){
+    return '<div class="opt '+(cls||'')+' '+(sel===c.v?'sel':'')+'" onclick="choose(this,\''+key+'\',\''+c.v+'\','+(c.p||0)+')">'+
+      '<div class="tick">\u2713</div><div>'+c.t+'</div></div>';
+  }).join('')+'</div>';
+}
+/* --- multi select --- */
+function toggleMulti(el,key,v,solo){
+  var cur=A[key]||[];
+  if(solo){cur=cur.indexOf(v)>-1?[]:[v];}
+  else{cur=cur.filter(function(x){return x!=='solo'});
+       cur=cur.indexOf(v)>-1?cur.filter(function(x){return x!==v}):cur.concat([v]);}
+  A[key]=cur;paint();
+}
+function multiScreen(item){
+  var sel=A[item.key]||[];
+  var opts=item.choices.map(function(c){
+    return '<div class="opt multi '+(sel.indexOf(c.v)>-1?'sel':'')+'" onclick="toggleMulti(this,\''+item.key+'\',\''+c.v+'\','+(c.solo?'true':'false')+')">'+
       '<div class="tick">\u2713</div><div>'+c.t+'</div></div>';
   }).join('');
-  return '<div class="fade"><h2>'+item.title+'</h2>'+(item.sub?'<p class="sub">'+item.sub+'</p>':'<div style="height:6px"></div>')+
-    '<div class="opts">'+opts+'</div>'+
+  var n=sel.filter(function(x){return x!=='solo'}).length;
+  var note=sel.length?(sel.indexOf('solo')>-1?'One decision maker':n+' '+(n===1?'role':'roles')+' selected'):'Select at least one';
+  return '<div class="fade"><h2>'+item.title+'</h2><p class="sub">'+item.sub+'</p>'+
+    '<div class="opts">'+opts+'</div><div class="selcount">'+note+'</div>'+
+    '<button class="btn" id="cont" onclick="next()" '+(sel.length?'':'disabled')+'>Continue</button></div>';
+}
+function multiPoints(item){
+  var sel=A[item.key]||[];
+  if(!sel.length)return 0;
+  if(sel.indexOf('solo')>-1)return 30;
+  var n=sel.length,b=item.bands,i,p=b[0].p;
+  for(i=0;i<b.length;i++){if(n>=b[i].n)p=b[i].p;}
+  return p;
+}
+/* --- slider --- */
+function slide(key,v){A[key]=+v;var e=document.getElementById('sv');if(e)e.textContent=v;enable(true);}
+function sliderScreen(g,key){
+  var val=(A[key]!=null)?A[key]:Math.round((g.min+g.max)/2);
+  return '<div class="fade"><h2>'+g.title+'</h2><p class="sub">'+g.sub+'</p>'+
+    '<div class="sld"><div class="sldval" id="sv">'+val+'</div><div class="sldunit">'+g.unit+'</div>'+
+    '<input type="range" min="'+g.min+'" max="'+g.max+'" value="'+val+'" oninput="slide(\''+key+'\',this.value)">'+
+    '<div class="sldends"><span>'+g.min+'</span><span>'+g.max+'</span></div></div>'+
+    '<button class="btn" id="cont" onclick="next()" '+(A[key]!=null?'':'disabled')+'>Show me the real number</button></div>';
+}
+/* --- ranking --- */
+function rank(key,v,pick){
+  var cur=A[key]||[];
+  if(cur.indexOf(v)>-1)cur=cur.filter(function(x){return x!==v});
+  else if(cur.length<pick)cur=cur.concat([v]);
+  A[key]=cur;paint();
+}
+function rankScreen(g,key){
+  var cur=A[key]||[];
+  var rows=g.choices.map(function(c){
+    var i=cur.indexOf(c.v);
+    return '<div class="rk '+(i>-1?'on':'')+'" onclick="rank(\''+key+'\',\''+c.v+'\','+g.pick+')">'+
+      '<div class="pos">'+(i>-1?(i+1):'')+'</div><div>'+c.t+'</div></div>';
+  }).join('');
+  return '<div class="fade"><h2>'+g.title+'</h2><p class="sub">'+g.sub+'</p>'+rows+
+    '<div class="selcount">'+cur.length+' of '+g.pick+' chosen</div>'+
+    '<button class="btn" id="cont" onclick="next()" '+(cur.length===g.pick?'':'disabled')+'>Continue</button></div>';
+}
+/* --- reveal --- */
+function revealScreen(g,key){
+  var cmp='';
+  if(g.kind==='slider'){
+    cmp='<div class="gcmp"><div class="gbox you"><b>'+g.fmtYou(A[key])+'</b><span>'+g.youLbl+'</span></div>'+
+        '<div class="gbox real"><b>'+g.fmtReal()+'</b><span>'+g.realLbl+'</span></div></div>';
+  }else if(g.kind==='choice'){
+    var yours=g.choices.filter(function(c){return c.v===A[key]})[0];
+    var right=g.choices.filter(function(c){return c.v===g.correct})[0];
+    cmp='<div class="gcmp"><div class="gbox you"><b style="font-size:15px;line-height:1.3">'+(yours?yours.t:'\u2014')+'</b><span>You said</span></div>'+
+        '<div class="gbox real"><b style="font-size:15px;line-height:1.3">'+right.t+'</b><span>Actually first</span></div></div>';
+  }
+  return '<div class="fade"><div class="etag bench">What the research says</div>'+cmp+
+    '<h2 style="margin-top:18px">'+g.head+'</h2>'+
+    '<p class="sub" style="margin-bottom:0">'+g.body+'</p>'+
+    '<div class="esrc">'+g.src+'</div>'+
+    '<button class="btn" onclick="next()">Continue</button></div>';
+}
+/* --- process question + edu --- */
+function qScreen(item){
+  if(item.type==='multi')return multiScreen(item);
+  var sel=A[item.key];
+  return '<div class="fade"><h2>'+item.title+'</h2>'+
+    (item.sub?'<p class="sub">'+item.sub+'</p>':'<div style="height:6px"></div>')+
+    optList(item.key,item.choices)+
     '<button class="btn" id="cont" onclick="next()" '+(sel?'':'disabled')+'>Continue</button></div>';
 }
 function eduFor(item){
-  const v=A[item.key], p=A[item.key+'_p']||0;
-  if(item.eduBy && EDU[item.eduBy] && EDU[item.eduBy][v]) return EDU[item.eduBy][v];
-  const set=EDU[item.key]; if(!set) return null;
-  return p>=30 ? set.hi : set.lo;
+  var v=A[item.key],p=A[item.key+'_p']||0,set=EDU[item.key];
+  if(item.eduBy&&EDU[item.eduBy]&&EDU[item.eduBy][v])return EDU[item.eduBy][v];
+  if(!set)return null;
+  if(set.any)return (v==='never'&&set.unknown)?set.unknown:set.any;
+  return p>=30?set.hi:set.lo;
 }
 function eduScreen(item){
-  const e=eduFor(item); if(!e) return '<div class="fade"><button class="btn" onclick="next()">Continue</button></div>';
-  return '<div class="fade">'+
-    '<div class="etag '+e.tag+'">'+e.label+'</div>'+
-    '<div class="estat">'+e.stat+'</div>'+
-    '<h2>'+e.head+'</h2>'+
+  var e=eduFor(item);
+  if(!e)return '<div class="fade"><button class="btn" onclick="next()">Continue</button></div>';
+  return '<div class="fade"><div class="etag '+e.tag+'">'+e.label+'</div>'+
+    '<div class="estat">'+e.stat+'</div><h2>'+e.head+'</h2>'+
     '<p class="sub" style="margin-bottom:0">'+e.body+'</p>'+
     '<div class="esrc">'+e.src+'</div>'+
     '<button class="btn" onclick="next()">Continue</button></div>';
 }
+function profileScreen(kicker,title,sub,key,choices){
+  var sel=A[key];
+  return '<div class="fade"><div class="kicker">'+kicker+'</div><h2>'+title+'</h2>'+
+    (sub?'<p class="sub">'+sub+'</p>':'<div style="height:6px"></div>')+
+    optList(key,choices)+
+    '<button class="btn" id="cont" onclick="next()" '+(sel?'':'disabled')+'>Continue</button></div>';
+}
 
 /* ================= SCORING ================= */
+function qPoints(item){
+  if(item.type==='multi')return multiPoints(item);
+  return A[item.key+'_p']||0;
+}
+function qMax(item){
+  if(item.type==='multi')return 50;
+  return Math.max.apply(null,item.choices.map(function(c){return c.p}));
+}
 function stageScores(){
-  const out={};
+  var out={};
   STAGES.forEach(function(s,i){
-    const items=Q.filter(function(q){return q.s===i});
-    const max=items.reduce(function(a,q){return a+Math.max.apply(null,q.choices.map(function(c){return c.p}))},0);
-    const got=items.reduce(function(a,q){return a+(A[q.key+'_p']||0)},0);
+    var items=Q.filter(function(q){return q.s===i});
+    var max=items.reduce(function(a,q){return a+qMax(q)},0);
+    var got=items.reduce(function(a,q){return a+qPoints(q)},0);
     out[s.id]=Math.round(got/max*100);
   });
   return out;
 }
 function overallScore(sc){
-  const v=STAGES.map(function(s){return sc[s.id]});
+  var v=STAGES.map(function(s){return sc[s.id]});
   return Math.round(v.reduce(function(a,b){return a+b},0)/v.length);
 }
 function bottleneck(sc){
-  let id=STAGES[0].id, lo=101;
-  STAGES.forEach(function(s){ if(sc[s.id]<lo){lo=sc[s.id];id=s.id;} });
+  var id=STAGES[0].id,lo=101;
+  STAGES.forEach(function(s){if(sc[s.id]<lo){lo=sc[s.id];id=s.id;}});
   return id;
 }
-function readiness(sc){ return Math.round((sc.pitch+sc.follow+sc.team)/3); }
+function knowledgeScore(){
+  var keys=['guess_easy','guess_walkaway','guess_touches','win_factors','guess_selling'],t=0,n=0;
+  keys.forEach(function(k){
+    var g=GUESS[k];if(!g||A[k]==null)return;
+    t+=g.score(A[k]);n++;
+  });
+  return n?Math.round(t/n):0;
+}
+function readiness(sc){return Math.round((sc.pitch+sc.follow+sc.team)/3);}
 function leadScore(){
-  const R={lt10:0,'10-50':18,'50-150':28,'150+':35}[A.revenue]||0;
-  const T={'1-10':5,'11-30':14,'31-100':20,'100+':20}[A.team]||0;
-  const U={now:25,quarter:16,year:8,explore:0}[A.urgency]||0;
-  return R+T+U+20; // +20: прошёл диагностику целиком
+  var R={lt10:0,'10-50':18,'50-150':28,'150+':35}[A.revenue]||0;
+  var T={'1-10':5,'11-30':14,'31-100':20,'100+':20}[A.team]||0;
+  var U={now:25,quarter:16,year:8,explore:0}[A.urgency]||0;
+  return R+T+U+20;
 }
 function leadSegment(){
-  const p=leadScore();
-  let seg=p>=70?'A':p>=45?'B':'V';
-  if(A.urgency==='explore'&&p<60) seg='V';
-  A.leadScore=p; A.leadSegment=seg;
-  console.log('LEAD',{score:p,seg,bottleneck:A.bottleneck});
+  var p=leadScore(),seg=p>=70?'A':p>=45?'B':'V';
+  if(A.urgency==='explore'&&p<60)seg='V';
+  A.leadScore=p;A.leadSegment=seg;
+  console.log('LEAD',{score:p,seg:seg,bottleneck:A.bottleneck,knowledge:A.knowledge});
   return seg;
 }
 
 /* ================= SCREENS ================= */
 const S=[];
+var QTOTAL=17;
 
-/* --- STAGE 1: landing --- */
+/* --- landing --- */
 S.push({hero:true,render:function(){return '<div class="fade land">'+
   '<div class="lhero">'+
     '<div class="kicker">Intch Sales Diagnostic</div>'+
-    '<h1>What separates a leaking pipeline from one that prints millions</h1>'+
-    '<p class="sub">Answer 12 questions about how you sell. After each one, see what the 2026 research says the best teams do differently \u2014 and where you stand.</p>'+
-    '<div class="wchips"><span class="wchip"><b>12</b> questions</span><span class="wchip"><b>6</b> stages</span><span class="wchip"><b>7</b> min</span></div>'+
+    '<h1>The founders who break through know how their buyers decide</h1>'+
+    '<p class="sub">Not better tools. Not a better product. Knowing where the decision actually gets made in your niche \u2014 and what moves it. Find out how much of that you already know.</p>'+
+    '<div class="wchips"><span class="wchip"><b>17</b> questions</span><span class="wchip"><b>6</b> stages</span><span class="wchip"><b>10</b> min</span></div>'+
     '<button class="btn" onclick="next()">Start the diagnostic \u2192</button>'+
   '</div>'+
   '<div class="lsec alt">'+
     '<h3>Sound familiar?</h3>'+
-    '<p class="lsub">This is built for founders who already have a business \u2014 and a ceiling.</p>'+
-    '<div class="pain">Deals vanish after the meeting and you can\u2019t tell whether the pitch was wrong or the rep gave up.</div>'+
+    '<p class="lsub">Built for founders who already have a business \u2014 and a ceiling.</p>'+
+    '<div class="pain">Deals vanish after the meeting and you cannot tell whether the pitch was wrong or the rep gave up.</div>'+
     '<div class="pain">Revenue has sat at the same number for months while payroll keeps growing.</div>'+
     '<div class="pain">You have sales people, but no way to tell a bad hire from a bad process.</div>'+
   '</div>'+
   '<div class="lsec">'+
-    '<h3>The gap between growing and stalling has never been wider</h3>'+
-    '<p class="lsub">McKinsey asked around 4,000 B2B buyers how they buy, and compared the companies gaining market share with those losing it.</p>'+
+    '<h3>It is not the tools</h3>'+
+    '<p class="lsub">McKinsey compared the companies gaining market share with those losing it, and found the laggards had access to the same channels and the same technology. What separated them was how coherently it was used \u2014 knowing how their buyers decide.</p>'+
     '<div class="statrow">'+
       '<div class="statbox"><b>60% vs 21%</b><span>of winners grew revenue by double digits, against everyone else</span></div>'+
-      '<div class="statbox"><b>90% vs 55%</b><span>of winners say their selling got better this year</span></div>'+
+      '<div class="statbox"><b>40\u201360%</b><span>of lost B2B deals go to no decision, not to a competitor</span></div>'+
     '</div>'+
-    '<p class="lsub" style="margin:16px 0 0">The difference wasn\u2019t the market or the industry. It was how the selling itself was put together.</p>'+
+    '<div class="esrc" style="text-align:center">McKinsey Global B2B Pulse 2026 \u00b7 Dixon &amp; McKenna, HBR 2022</div>'+
   '</div>'+
   '<div class="lsec alt">'+
-    '<h3>Three things that quietly cost you deals</h3>'+
-    '<p class="lsub">Buyers were asked what makes them stop working with a supplier. None of the top answers is price.</p>'+
-    '<div class="pain"><b>52%</b> \u2014 different people in the company give different answers on price, availability or timing.</div>'+
-    '<div class="pain"><b>52%</b> \u2014 they can\u2019t reach anyone who actually knows the answer or can decide.</div>'+
-    '<div class="pain"><b>50%</b> \u2014 the sales conversation isn\u2019t about their business.</div>'+
-    '<div class="esrc">McKinsey Global B2B Pulse 2026 \u00b7 ~4,000 B2B buyers across 13 countries</div>'+
-  '</div>'+
-  '<div class="lsec">'+
-    '<h3>What\u2019s inside</h3>'+
-    '<p class="lsub">You learn something at every step \u2014 not only at the end.</p>'+
-    '<div class="inside"><div class="inum">1</div><div><b>12 questions across 6 stages</b><p>From how people find you, to how your team is coached. Plain questions, no jargon.</p></div></div>'+
-    '<div class="inside"><div class="inum">2</div><div><b>A finding after every answer</b><p>What the 2026 research says about that exact question \u2014 and what the strongest teams do instead.</p></div></div>'+
-    '<div class="inside"><div class="inum">3</div><div><b>Your scorecard and your one weak stage</b><p>Six scores, and the single place to fix first.</p></div></div>'+
-    '<div class="inside"><div class="inum">4</div><div><b>A call with a growth consultant</b><p>Optional. We turn the diagnosis into a plan and the experts who can run it.</p></div></div>'+
+    '<h3>What is inside</h3>'+
+    '<div class="inside"><div class="inum">1</div><div><b>Five questions you probably cannot answer yet</b><p>How many follow-ups a decision really takes. Who is in the room when you are not. What actually decides a win.</p></div></div>'+
+    '<div class="inside"><div class="inum">2</div><div><b>The real number, right after you guess</b><p>Every guess is followed by what the 2026 research found, with the source.</p></div></div>'+
+    '<div class="inside"><div class="inum">3</div><div><b>Two scores</b><p>How your funnel performs, and how well you know the market you sell into.</p></div></div>'+
+    '<div class="inside"><div class="inum">4</div><div><b>The one stage to fix, and who fixes it</b><p>Matched to people who have fixed that exact stage before.</p></div></div>'+
   '</div>'+
   '<div class="lcta">'+
-    '<h2 class="center" style="font-size:22px">Find out where your money is leaking</h2>'+
-    '<p class="sub center" style="margin-bottom:16px">Built on 2026 research from McKinsey, Salesforce, Deloitte Digital and FedEx \u2014 more than 9,000 buyers and sales professionals.</p>'+
+    '<h2 class="center" style="font-size:22px">How much do you actually know about how your buyers decide?</h2>'+
+    '<p class="sub center" style="margin-bottom:16px">Built on 2026 research from McKinsey, Salesforce, Deloitte, Gartner and Forrester \u2014 and 5,365 Intch growth cases.</p>'+
     '<button class="btn" onclick="next()">Start the diagnostic \u2192</button>'+
   '</div>'+
 '</div>';}});
 
-/* --- niche (calibration, no education screen) --- */
+/* --- niche --- */
 S.push({key:'niche',render:function(){
-  const choices=[{v:'saas',t:'SaaS / IT product'},{v:'agency',t:'Agency / services'},{v:'ecom',t:'E-commerce / retail'},
-    {v:'prod',t:'Manufacturing / B2B supply'},{v:'edu',t:'Education / EdTech'},{v:'other',t:'Something else'}];
-  const sel=A.niche;
-  const opts=choices.map(function(c){
-    return '<div class="opt '+(sel===c.v?'sel':'')+'" onclick="choose(this,\'niche\',\''+c.v+'\',0)"><div class="tick">\u2713</div><div>'+c.t+'</div></div>';
-  }).join('');
-  return '<div class="fade"><div class="kicker">Before we start</div><h2>What does your business sell?</h2>'+
-    '<p class="sub">So we benchmark you against the right companies</p><div class="opts">'+opts+'</div>'+
-    '<button class="btn" id="cont" onclick="next()" '+(sel?'':'disabled')+'>Continue</button></div>';
+  var choices=[{v:'saas',t:'SaaS or IT product'},{v:'agency',t:'Agency or services'},
+    {v:'ecom',t:'E-commerce or retail'},{v:'prod',t:'Manufacturing or B2B supply'},
+    {v:'edu',t:'Education'},{v:'other',t:'Something else'}];
+  return profileScreen('Before we start','What does your business sell?','So we compare you with the right companies','niche',choices);
 }});
 
-/* --- STAGE 2: 12 questions, each followed by an education screen --- */
-Q.forEach(function(item,i){
-  S.push({stage:item.s,qi:i+1,render:function(){return qScreen(item)}});
-  S.push({stage:item.s,qi:i+1,render:function(){return eduScreen(item)}});
-});
-
-/* --- profile (scoring, no education) --- */
-S.push({key:'revenue',render:function(){
-  const choices=[{v:'lt10',t:'Under $10k / mo'},{v:'10-50',t:'$10k \u2013 $50k / mo'},{v:'50-150',t:'$50k \u2013 $150k / mo'},{v:'150+',t:'$150k+ / mo'}];
-  return profileScreen('Final calibration','What\u2019s your current monthly revenue?','We benchmark ranges only \u2014 we don\u2019t store exact numbers','revenue',choices);
-}});
-S.push({key:'team',render:function(){
-  const choices=[{v:'1-10',t:'1\u201310 people'},{v:'11-30',t:'11\u201330 people'},{v:'31-100',t:'31\u2013100 people'},{v:'100+',t:'100+ people'}];
-  return profileScreen('Final calibration','How big is your team?','Team size changes what a fix should look like','team',choices);
-}});
-S.push({key:'urgency',render:function(){
-  const choices=[{v:'now',t:'Yesterday \u2014 it\u2019s urgent'},{v:'quarter',t:'This quarter'},{v:'year',t:'This year'},{v:'explore',t:'Just exploring for now'}];
-  return profileScreen('Final calibration','When do you want this fixed?','','urgency',choices);
-}});
-function profileScreen(kicker,title,sub,key,choices){
-  const sel=A[key];
-  const opts=choices.map(function(c){
-    return '<div class="opt '+(sel===c.v?'sel':'')+'" onclick="choose(this,\''+key+'\',\''+c.v+'\',0)"><div class="tick">\u2713</div><div>'+c.t+'</div></div>';
-  }).join('');
-  return '<div class="fade"><div class="kicker">'+kicker+'</div><h2>'+title+'</h2>'+
-    (sub?'<p class="sub">'+sub+'</p>':'<div style="height:6px"></div>')+'<div class="opts">'+opts+'</div>'+
-    '<button class="btn" id="cont" onclick="next()" '+(sel?'':'disabled')+'>Continue</button></div>';
+/* --- build the question flow --- */
+function pushQ(key,qi){
+  var item=Q.filter(function(q){return q.key===key})[0];
+  S.push({stage:item.s,qi:qi,render:function(){return qScreen(item)}});
+}
+function pushEdu(key,qi){
+  var item=Q.filter(function(q){return q.key===key})[0];
+  S.push({stage:item.s,qi:qi,render:function(){return eduScreen(item)}});
+}
+function pushGuess(key,qi){
+  var g=GUESS[key];
+  S.push({stage:g.s,qi:qi,render:function(){
+    return g.kind==='slider'?sliderScreen(g,key):(g.kind==='rank'?rankScreen(g,key):
+      '<div class="fade"><h2>'+g.title+'</h2><p class="sub">'+g.sub+'</p>'+
+      optList(key,g.choices)+
+      '<button class="btn" id="cont" onclick="next()" '+(A[key]?'':'disabled')+'>Show me the real answer</button></div>');
+  }});
+  S.push({stage:g.s,qi:qi,render:function(){return revealScreen(g,key)}});
 }
 
-/* --- email gate (before the scorecard) --- */
+pushQ('leads_source',1);      pushEdu('leads_source',1);
+pushGuess('guess_easy',2);
+pushQ('leads_selfserve',3);
+pushQ('stall_owner',4);
+pushQ('dmu_roles',5);         pushEdu('dmu_roles',5);
+pushQ('pitch_tailor',6);
+pushGuess('guess_walkaway',7);
+pushQ('pitch_proof',8);       pushEdu('pitch_proof',8);
+pushGuess('guess_touches',9);
+pushQ('follow_next',10);
+pushQ('follow_obj',11);       pushEdu('follow_obj',11);
+pushQ('cycle_len',12);        pushEdu('cycle_len',12);
+pushGuess('win_factors',13);
+pushQ('close_repeat',14);
+pushGuess('guess_selling',15);
+pushQ('team_coach',16);
+pushQ('team_data',17);        pushEdu('team_data',17);
+
+/* --- profile --- */
+S.push({key:'years',render:function(){
+  return profileScreen('Almost done','How long have you been running a business in this niche?','','years',
+    [{v:'lt1',t:'Under a year'},{v:'1-2',t:'One to two years'},{v:'3-7',t:'Three to seven years'},{v:'8+',t:'Eight years or more'}]);
+}});
+S.push({key:'revenue',render:function(){
+  return profileScreen('Almost done','What is your current monthly revenue?','We use ranges only','revenue',
+    [{v:'lt10',t:'Under $10k a month'},{v:'10-50',t:'$10k \u2013 $50k'},{v:'50-150',t:'$50k \u2013 $150k'},{v:'150+',t:'$150k or more'}]);
+}});
+S.push({key:'team',render:function(){
+  return profileScreen('Almost done','How big is your team?','','team',
+    [{v:'1-10',t:'1\u201310 people'},{v:'11-30',t:'11\u201330 people'},{v:'31-100',t:'31\u2013100 people'},{v:'100+',t:'100 or more'}]);
+}});
+S.push({key:'urgency',render:function(){
+  return profileScreen('Almost done','When do you want this fixed?','','urgency',
+    [{v:'now',t:'Yesterday \u2014 it is urgent'},{v:'quarter',t:'This quarter'},{v:'year',t:'This year'},{v:'explore',t:'Just exploring'}]);
+}});
+
+/* --- email gate --- */
 S.push({render:function(){return '<div class="fade">'+
   '<h2 class="center">Your scorecard is ready</h2>'+
-  '<p class="sub center">Tell us where to send it, and we\u2019ll keep a copy you can share with your sales team.</p>'+
+  '<p class="sub center">Tell us where to send it, and we will keep a copy you can share with your team.</p>'+
   '<input id="email" type="email" placeholder="Work email" value="'+(A.email||'')+'" oninput="A.email=this.value;gate()">'+
   '<div id="emailErr" class="err" style="display:none"></div>'+
   '<button class="btn" id="g" onclick="submitEmail()" disabled>Show my scorecard</button>'+
@@ -710,79 +884,82 @@ S.push({render:function(){return '<div class="fade">'+
   '<div class="loader"><div class="ring"></div></div>'+
   '<h2 class="center" style="margin-top:16px">Scoring your funnel\u2026</h2>'+
   '<div class="checks" id="checks">'+
-  ['Scoring all six funnel stages','Comparing you to world benchmarks','Locating your biggest leak','Matching experts who fixed it']
+  ['Scoring all six stages','Comparing you with 2026 research','Locating your biggest leak','Matching experts who fixed it']
    .map(function(t,i){return '<div class="crow" id="cr'+i+'"><div class="cbox">\u2713</div>'+t+'</div>'}).join('')+
   '</div></div>';},
   onShow:function(){
-    let i=0;const rows=[0,1,2,3];
-    const tick=function(){
-      rows.forEach(function(r){const el=document.getElementById('cr'+r);if(!el)return;
+    var i=0,rows=[0,1,2,3];
+    var tick=function(){
+      rows.forEach(function(r){var el=document.getElementById('cr'+r);if(!el)return;
         el.classList.remove('active');if(r<i)el.classList.add('done');if(r===i)el.classList.add('active');});
-      i++; if(i>4){clearInterval(window._l);next();}
+      i++;if(i>4){clearInterval(window._l);next();}
     };
     clearInterval(window._l);tick();window._l=setInterval(tick,850);
   },
   onLeave:function(){clearInterval(window._l)}});
 
-/* --- STAGE 3: scorecard --- */
-const BENCH=72; // НАША шкала «где сидят сильные команды», а не цифра из исследования
+/* --- scorecard --- */
+const BENCH=72; // НАША шкала, не цифра из исследования
 S.push({render:function(){
-  const sc=stageScores(), total=overallScore(sc), bn=bottleneck(sc), rd=readiness(sc);
-  A.bottleneck=bn; A.funnelScore=total; A.readiness=rd;
-  const verdict = total>=68?['Solid','Your funnel holds. The gains now come from one stage, not a rebuild.']
-    : total>=45?['Patchy','Parts of your funnel work. One stage is quietly undoing the rest.']
-    : ['Leaking','Your pipeline loses most of what enters it \u2014 and the biggest leak is fixable first.'];
-  const noWeak=Math.min.apply(null,STAGES.map(function(s){return sc[s.id]}))>=80;
-  const rows=STAGES.map(function(s){
-    const v=sc[s.id], weak=(!noWeak&&s.id===bn);
+  var sc=stageScores(),total=overallScore(sc),bn=bottleneck(sc),rd=readiness(sc),kn=knowledgeScore();
+  A.bottleneck=bn;A.funnelScore=total;A.readiness=rd;A.knowledge=kn;
+  var noWeak=Math.min.apply(null,STAGES.map(function(s){return sc[s.id]}))>=80;
+  var verdict=total>=68?['Solid','Your funnel holds. The gains now come from one stage, not a rebuild.']
+    :total>=45?['Patchy','Parts of it work. One stage is quietly undoing the rest.']
+    :['Leaking','Your pipeline loses most of what enters it \u2014 and the biggest leak is fixable first.'];
+  var rows=STAGES.map(function(s){
+    var v=sc[s.id],weak=(!noWeak&&s.id===bn);
     return '<div class="srow '+(weak?'weak':'')+'">'+
       '<div class="shead"><span>'+s.name+(weak?' \u00b7 bottleneck':'')+'</span><b>'+v+' / 100</b></div>'+
       '<div class="strack"><i data-w="'+v+'"></i><u style="left:calc('+BENCH+'% - 1px)"></u></div></div>';
   }).join('');
-  const d=noWeak?DIAG.none:DIAG[bn];
-  const dash=Math.round(rd/100*138);
+  var d=noWeak?DIAG.none:DIAG[bn];
+  var knText=kn>=70?'You know this market better than most founders selling into it. That knowledge is your real advantage \u2014 the question is whether your team can use it without you.'
+    :kn>=40?'You know parts of how your buyers decide, and you are guessing at the rest. The guesses are where deals go missing.'
+    :'Most of how your buyers actually decide is still invisible to you. That is not a failing \u2014 nobody publishes it. It is learned from people who have run the cycle in your niche many times.';
+  var dash=Math.round(rd/100*138);
   return '<div class="fade">'+
-    '<div class="kicker">AI Benchmark Scorecard</div>'+
+    '<div class="kicker">Your scorecard</div>'+
     '<div class="scorehead">'+
       '<div class="bignum">'+total+'<small>/100</small></div>'+
-      '<div class="verdict">'+verdict[0]+'</div>'+
-      '<p>'+verdict[1]+'</p></div>'+
+      '<div class="verdict">'+verdict[0]+'</div><p>'+verdict[1]+'</p></div>'+
     rows+
     '<div class="legend"><span><i></i>Your score</span><span><u></u>Where strong teams sit</span></div>'+
-    '<div class="esrc" style="text-align:center;margin-top:8px">Scored against findings from McKinsey, Salesforce and Deloitte Digital, 2026.</div>'+
+    '<div class="esrc" style="text-align:center;margin-top:8px">Scored against 2026 findings from McKinsey, Salesforce, Deloitte, Gartner and Forrester.</div>'+
     '<div class="bottle"><div class="k">Your #1 bottleneck</div><h3>'+d.h+'</h3><p>'+d.p+'</p>'+
       '<div class="fixes">'+d.f.map(function(f){return '<div class="fix"><span class="ck">\u2713</span>'+f+'</div>'}).join('')+'</div></div>'+
+    '<div class="know"><div><b>How well you know your market: '+kn+'/100</b><p>'+knText+'</p></div></div>'+
     '<div class="readiness">'+
       '<svg class="rdial" viewBox="0 0 50 50"><circle cx="25" cy="25" r="22" fill="none" stroke="hsl(230,20%,90%)" stroke-width="6"/>'+
       '<circle cx="25" cy="25" r="22" fill="none" stroke="hsl(244,75%,60%)" stroke-width="6" stroke-linecap="round" '+
       'stroke-dasharray="'+dash+' 999" transform="rotate(-90 25 25)"/>'+
       '<text x="25" y="29" text-anchor="middle" font-size="14" font-weight="800" fill="hsl(230,35%,12%)">'+rd+'</text></svg>'+
       '<div><b>Could someone else run this? '+rd+'/100</b><p>How much of your selling a new person could take over without you. Below 50 means you are the process.</p></div></div>'+
+    (A.years?'<div class="yrs"><b>'+({lt1:'Under a year in this niche','1-2':'Two years in this niche','3-7':'Several years in this niche','8+':'Eight years or more in this niche'})[A.years]+'</b><p>'+YEARS[A.years]+'</p></div>':'')+
     '<button class="btn" onclick="next()">How do I fix this?</button></div>';},
-  onShow:function(){
-    setTimeout(function(){
-      document.querySelectorAll('.strack>i').forEach(function(el){el.style.width=el.dataset.w+'%';});
-    },80);
-  }});
+  onShow:function(){setTimeout(function(){
+    document.querySelectorAll('.strack>i').forEach(function(el){el.style.width=el.dataset.w+'%';});},80);}
+});
 
 /* --- how Intch works --- */
 S.push({render:function(){return '<div class="fade">'+
-  '<h2 class="center">How Intch works</h2>'+
-  '<p class="sub center">We diagnose what blocks your revenue and deliver the expertise to fix it. Here is how</p>'+
+  '<h2 class="center">What happens next</h2>'+
+  '<p class="sub center">You have the diagnosis. Here is how it becomes a fix.</p>'+
   '<div class="pipe">'+
-    '<div class="pl-row done"><div class="pl-dot">\u2713</div><div><div class="pl-t">Funnel diagnosis</div><div class="pl-s">Done \u2014 you\u2019re here</div></div></div>'+
-    '<div class="pl-row next"><div class="pl-dot">2</div><div><div class="pl-t">Book a 1:1 strategy call</div><div class="pl-s">Next step \u2014 do it today</div></div></div>'+
-    '<div class="pl-row"><div class="pl-dot">3</div><div><div class="pl-t">Experts who fixed this exact stage</div><div class="pl-s">After the call \u2014 within 3 days</div></div></div>'+
+    '<div class="pl-row done"><div class="pl-dot">\u2713</div><div><div class="pl-t">Your funnel, scored</div><div class="pl-s">Done \u2014 you are here</div></div></div>'+
+    '<div class="pl-row next"><div class="pl-dot">2</div><div><div class="pl-t">A call to pressure-test the bottleneck</div><div class="pl-s">45 minutes, free \u2014 book it today</div></div></div>'+
+    '<div class="pl-row"><div class="pl-dot">3</div><div><div class="pl-t">People who have fixed that exact stage</div><div class="pl-s">Introduced within 3 days</div></div></div>'+
+    '<div class="pl-row"><div class="pl-dot">4</div><div><div class="pl-t">Retake the diagnostic in 60 days</div><div class="pl-s">Same six scores, so you can see what moved</div></div></div>'+
   '</div>'+
   '<button class="btn" onclick="next()">Continue</button></div>';}});
 
-/* --- STAGE 4: book a call --- */
+/* --- final offer, tied to the bottleneck --- */
 S.push({render:function(){return finalScreen()}});
-
 function finalScreen(){
   leadSegment();
-  const bn=A.bottleneck||'follow';
-  const name=({leads:'Getting found',qual:'First reply',pitch:'The meeting',follow:'After the meeting',close:'Paying &amp; buying again',team:'Team &amp; information'})[bn];
+  var bn=A.bottleneck||'follow';
+  var name=({leads:'Getting found',qual:'Who decides',pitch:'The meeting',follow:'After the meeting',
+    close:'Getting paid',team:'Team &amp; information'})[bn];
   return '<div class="fade" style="text-align:center">'+
     '<div class="expo"><div class="expo-glow"></div><div class="avstack">'+
       '<div class="avc" style="background:linear-gradient(135deg,#6C5CE7,#12B886)">A</div>'+
@@ -790,37 +967,36 @@ function finalScreen(){
       '<div class="avc" style="background:linear-gradient(135deg,#12B886,#6C5CE7)">R</div>'+
       '<div class="avc more">+</div></div></div>'+
     '<div class="matched-badge">\u2713 Matched to your bottleneck: '+name+'</div>'+
-    '<h2 class="center" style="margin-top:12px">Experts who have fixed this stage before</h2>'+
-    '<p class="sub center">Book a free strategy call \u2014 we turn your scorecard into a plan and the people who can run it</p>'+
+    '<h2 class="center" style="margin-top:12px">You are losing money at \u201c'+name+'\u201d. These people have fixed exactly that</h2>'+
+    '<p class="sub center">Book a free call. We turn your scorecard into a plan, and introduce the people who can run it.</p>'+
     '<div class="pills"><span class="pill">Free</span><span class="pill">45 minutes</span><span class="pill">No obligation</span></div>'+
     '<div class="card2 leftcard"><h4>What happens on the call</h4><div class="clist">'+
-      '<div class="ci"><span class="ck">\u2713</span>We walk through your six stage scores and pressure-test the bottleneck</div>'+
-      '<div class="ci"><span class="ck">\u2713</span>We show you exactly how we\u2019d fix that stage, with what we\u2019ve done before</div>'+
-      '<div class="ci"><span class="ck">\u2713</span>You leave with a plan and the 2\u20133 experts who fit your funnel</div>'+
+      '<div class="ci"><span class="ck">\u2713</span>We walk through your six scores and pressure-test the bottleneck</div>'+
+      '<div class="ci"><span class="ck">\u2713</span>We show you how we would fix that stage, with what has worked before</div>'+
+      '<div class="ci"><span class="ck">\u2713</span>You leave with a plan and the two or three people who fit your funnel</div>'+
     '</div></div>'+
-    '<button class="btn glow" onclick="cta(\'call\')">Book my free strategy call</button></div>';
+    '<button class="btn glow" onclick="cta(\'call\')">Book my free call</button></div>';
 }
 function cta(kind){
-  A.cta_clicked=kind; console.log('CTA',kind,'segment',A.leadSegment);
-  if(kind==='call'){ trackDemoSubmit(); window.open('https://calendly.com/gregory-z-intch/intch-demo-call','_blank'); }
+  A.cta_clicked=kind;console.log('CTA',kind,'segment',A.leadSegment);
+  if(kind==='call'){trackDemoSubmit();window.open('https://calendly.com/gregory-z-intch/intch-demo-call','_blank');}
 }
 function trackDemoSubmit(){
-  try{ if(typeof gtag==='function') gtag('event','b2b_demo_submit'); }catch(e){}
-  try{ if(typeof window.lintrk==='function') window.lintrk('track',{ conversion_id: 26949434 }); }catch(e){}
+  try{if(typeof gtag==='function')gtag('event','b2b_demo_submit');}catch(e){}
+  try{if(typeof window.lintrk==='function')window.lintrk('track',{conversion_id:26949434});}catch(e){}
 }
 function gate(){
-  const ok=/.+@.+\..+/.test(A.email||'');
-  const g=document.getElementById('g'); if(g) g.disabled=!ok;
+  var ok=/.+@.+\..+/.test(A.email||'');
+  var g=document.getElementById('g');if(g)g.disabled=!ok;
 }
 
 /* ==================== BACKEND INTEGRATION (Intch) ====================
-   Согласовать с бэкендом ДО запуска: ONBOARDING_PATH (строковый onboarding_type)
-   и LEAD_SOURCE (enum). Иначе register-lead вернёт 400, атрибуция сломается. */
+   Согласовать с бэкендом ДО запуска: ONBOARDING_PATH и LEAD_SOURCE. */
 const API_BASE='';
 const LOCALE='en';
 const CATEGORY_TYPE='business';
-const ONBOARDING_PATH='/onboarding/b2b-quiz/sales-funnel';   // TODO: зарегистрировать в OnboardingTypesByUrl
-const LEAD_SOURCE='b2b_quiz_sales_funnel';                   // TODO: завести enum на бэке
+const ONBOARDING_PATH='/onboarding/b2b-quiz/sales-funnel';   // TODO: зарегистрировать
+const LEAD_SOURCE='b2b_quiz_sales_funnel';                   // TODO: завести enum
 const DEV_BYPASS=(location.hostname.indexOf('intch.org')===-1);
 
 const LEAD={uid:null,country_code:null};
@@ -829,112 +1005,115 @@ let leadRegistered=false;
 function genUUID(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0,v=c==='x'?r:(r&0x3|0x8);return v.toString(16);});}
 
 async function registerLead(){
-  if(leadRegistered) return; leadRegistered=true;
+  if(leadRegistered)return;leadRegistered=true;
   try{
-    const u=API_BASE+'/service/register-lead/?locale='+encodeURIComponent(LOCALE)+'&lead_source='+encodeURIComponent(LEAD_SOURCE);
-    const res=await fetch(u); if(!res.ok) return; const j=await res.json();
-    LEAD.uid=j.uid||null; LEAD.country_code=j.country_code||null;
-    console.log('register-lead ok',LEAD);
-  }catch(e){ console.warn('register-lead failed',e); }
+    var u=API_BASE+'/service/register-lead/?locale='+encodeURIComponent(LOCALE)+'&lead_source='+encodeURIComponent(LEAD_SOURCE);
+    var res=await fetch(u);if(!res.ok)return;var j=await res.json();
+    LEAD.uid=j.uid||null;LEAD.country_code=j.country_code||null;
+  }catch(e){console.warn('register-lead failed',e);}
 }
 function getUTM(){
-  const utm={};
-  try{ new URL(window.location.href).searchParams.forEach(function(v,k){ if(k.indexOf('utm_')===0) utm[k]=v; }); }catch(e){}
-  if(Object.keys(utm).length) return utm;
-  const m=document.cookie.match(/(?:^|;\s*)first_utm=([^;]+)/);
-  if(m){ try{ return JSON.parse(decodeURIComponent(m[1])); }catch(e){} }
+  var utm={};
+  try{new URL(window.location.href).searchParams.forEach(function(v,k){if(k.indexOf('utm_')===0)utm[k]=v;});}catch(e){}
+  if(Object.keys(utm).length)return utm;
+  var m=document.cookie.match(/(?:^|;\s*)first_utm=([^;]+)/);
+  if(m){try{return JSON.parse(decodeURIComponent(m[1]));}catch(e){}}
   return null;
 }
-// answer → поле для бэка. Список энумов согласовать и прислать бэкенду.
 const ANSWER_MAP={
-  niche:         ['s0_niche',        {saas:'saas',agency:'agency',ecom:'ecommerce',prod:'manufacturing',edu:'education',other:'other'}],
-  leads_source:  ['s1_lead_source',  {referrals:'referrals',outbound:'outbound',inbound:'inbound',paid:'paid_ads',none:'no_source'}],
-  leads_selfserve:['s2_self_serve',  {all:'full',some:'partial',none:'none'}],
-  qual_criteria: ['s3_qualification',{rules:'written_rules',judgement:'rep_judgement',anyone:'no_filter'}],
-  qual_speed:    ['s4_response_time',{sameday:'same_day_empowered',days:'one_two_days',depends:'inconsistent',passed:'handed_around'}],
-  pitch_tailor:  ['s5_tailoring',    {built:'rebuilt_per_buyer',swapped:'partly_swapped',same:'one_size'}],
-  pitch_proof:   ['s6_value_proof',  {their:'their_numbers',typical:'typical_results',features:'features_price'}],
-  follow_next:   ['s7_followup',     {booked:'next_step_booked',days:'few_days',remember:'ad_hoc',nothing:'none'}],
-  follow_obj:    ['s8_objections',   {written:'written_practised',improvise:'improvised',dies:'deal_dies'}],
-  close_cr:      ['s9_meeting_to_paid',{'4plus':'40_plus','2-3':'20_30','1':'10',lt1:'under_10',nm:'not_measured'}],
-  close_repeat:  ['s10_repeat',      {owned:'owned_process',touch:'ad_hoc_contact',wait:'passive',rare:'no_repeat'}],
-  team_coach:    ['s11_coaching',    {weekly:'weekly_feedback',sometimes:'reactive',courses:'materials_only',none:'none'}],
-  team_data:     ['s12_data',        {one:'single_system',plus:'system_plus_sheets',sheets:'spreadsheets',heads:'undocumented'}],
-  revenue:       ['s13_revenue',     {lt10:'under_10k','10-50':'10_50k','50-150':'50_150k','150+':'150k_plus'}],
-  team:          ['s14_team_size',   {'1-10':'1_10','11-30':'11_30','31-100':'31_100','100+':'100_plus'}],
-  urgency:       ['s15_urgency',     {now:'now',quarter:'this_quarter',year:'this_year',explore:'exploring'}]
-};function mapAnswers(){
-  const out={};
-  for(const k in ANSWER_MAP){ const f=ANSWER_MAP[k][0],vm=ANSWER_MAP[k][1],v=A[k];
-    if(v!=null&&vm[v]!=null) out[f]=vm[v]; }
+  niche:          ['s0_niche',        {saas:'saas',agency:'agency',ecom:'ecommerce',prod:'manufacturing',edu:'education',other:'other'}],
+  leads_source:   ['s1_lead_source',  {referrals:'referrals',outbound:'outbound',inbound:'inbound',paid:'paid_ads',none:'no_source'}],
+  leads_selfserve:['s2_self_serve',   {all:'full',some:'partial',none:'none'}],
+  stall_owner:    ['s3_stall_owner',  {name:'known_person',role:'known_role',ask:'ask_contact',late:'too_late'}],
+  pitch_tailor:   ['s4_tailoring',    {built:'rebuilt_per_buyer',swapped:'partly_swapped',same:'one_size'}],
+  pitch_proof:    ['s5_value_proof',  {their:'their_numbers',typical:'typical_results',features:'features_price'}],
+  follow_next:    ['s6_followup',     {booked:'next_step_booked',days:'few_days',remember:'ad_hoc',nothing:'none'}],
+  follow_obj:     ['s7_objections',   {written:'written_practised',improvise:'improvised',dies:'deal_dies'}],
+  cycle_len:      ['s8_cycle',        {week:'under_1w','2-4':'2_4w','1-2m':'1_2m','3m':'3m_plus',never:'not_measured'}],
+  close_repeat:   ['s9_repeat',       {owned:'owned_process',touch:'ad_hoc_contact',wait:'passive',rare:'no_repeat'}],
+  team_coach:     ['s10_coaching',    {weekly:'weekly_feedback',sometimes:'reactive',courses:'materials_only',none:'none'}],
+  team_data:      ['s11_data',        {one:'single_system',plus:'system_plus_sheets',sheets:'spreadsheets',heads:'undocumented'}],
+  guess_walkaway: ['s12_guess_walkaway',{price:'price',slow:'slow_delivery',incons:'inconsistent_answers',product:'product'}],
+  years:          ['s13_years_in_niche',{lt1:'under_1',['1-2']:'1_2','3-7':'3_7','8+':'8_plus'}],
+  revenue:        ['s14_revenue',     {lt10:'under_10k','10-50':'10_50k','50-150':'50_150k','150+':'150k_plus'}],
+  team:           ['s15_team_size',   {'1-10':'1_10','11-30':'11_30','31-100':'31_100','100+':'100_plus'}],
+  urgency:        ['s16_urgency',     {now:'now',quarter:'this_quarter',year:'this_year',explore:'exploring'}]
+};
+function mapAnswers(){
+  var out={},k;
+  for(k in ANSWER_MAP){var f=ANSWER_MAP[k][0],vm=ANSWER_MAP[k][1],v=A[k];
+    if(v!=null&&vm[v]!=null)out[f]=vm[v];}
   return out;
 }
 function buildPayload(){
-  const d={};
+  var d={};
   d.email=(A.email||'').trim().toLowerCase();
-  d.locale=LOCALE; d.category_type=CATEGORY_TYPE; d.onboarding_type=ONBOARDING_PATH; d.accepted_terms=true;
-  if(LEAD.country_code) d.country_code=LEAD.country_code;
-  if(FB_LEAD_EVENT_ID) d.fb_lead_event_id=FB_LEAD_EVENT_ID;
-  const utm=getUTM(); if(utm) d.first_utm=utm;
-  // результаты диагностики — считаем до гейта, чтобы уходили вместе с лидом
-  const sc=stageScores();
+  d.locale=LOCALE;d.category_type=CATEGORY_TYPE;d.onboarding_type=ONBOARDING_PATH;d.accepted_terms=true;
+  if(LEAD.country_code)d.country_code=LEAD.country_code;
+  if(FB_LEAD_EVENT_ID)d.fb_lead_event_id=FB_LEAD_EVENT_ID;
+  var utm=getUTM();if(utm)d.first_utm=utm;
+  var sc=stageScores();
   d.funnel_score=overallScore(sc);
   d.funnel_bottleneck=bottleneck(sc);
+  d.market_knowledge_score=knowledgeScore();
   d.sales_manager_readiness=readiness(sc);
   d.stage_scores=sc;
+  d.dmu_roles=(A.dmu_roles||[]).join(',');
+  d.win_factors_rank=(A.win_factors||[]).join(',');
+  d.guess_easy=A.guess_easy;
+  d.guess_touches=A.guess_touches;
+  d.guess_selling_time=A.guess_selling;
   Object.assign(d,mapAnswers());
   return d;
 }
 async function saveData(payload){
-  const res=await fetch(API_BASE+'/api/v2/settings/setup/new-onboarding/save-data/',{
+  var res=await fetch(API_BASE+'/api/v2/settings/setup/new-onboarding/save-data/',{
     method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data:payload})});
-  if(res.ok) return res.json();
-  if(res.status===400) throw await res.json();
+  if(res.ok)return res.json();
+  if(res.status===400)throw await res.json();
   throw new Error('API '+res.status);
 }
 function fireQuizLead(externalId){
-  try{ if(typeof fbq==='function') fbq('track','Lead',{external_id:externalId||undefined},{eventID:FB_LEAD_EVENT_ID}); }catch(e){}
+  try{if(typeof fbq==='function')fbq('track','Lead',{external_id:externalId||undefined},{eventID:FB_LEAD_EVENT_ID});}catch(e){}
 }
 async function submitEmail(){
-  const btn=document.getElementById('g'),err=document.getElementById('emailErr');
-  const email=(A.email||'').trim().toLowerCase();
-  if(!/.+@.+\..+/.test(email)){ if(err){err.textContent='Enter a valid work email to see your scorecard.';err.style.display='block';} return; }
-  A.email=email; if(err) err.style.display='none';
-  btn.dataset.label=btn.dataset.label||btn.textContent; btn.disabled=true; btn.textContent='Sending\u2026';
+  var btn=document.getElementById('g'),err=document.getElementById('emailErr');
+  var email=(A.email||'').trim().toLowerCase();
+  if(!/.+@.+\..+/.test(email)){if(err){err.textContent='Enter a valid work email to see your scorecard.';err.style.display='block';}return;}
+  A.email=email;if(err)err.style.display='none';
+  btn.dataset.label=btn.dataset.label||btn.textContent;btn.disabled=true;btn.textContent='Sending\u2026';
   try{
-    const resp=await saveData(buildPayload());
+    var resp=await saveData(buildPayload());
     fireQuizLead(resp&&resp.external_id);
     next();
   }catch(e){
-    if(e&&e.error_code==='invalid_email'){ if(err){err.textContent=e.error_message||'Enter a valid work email.';err.style.display='block';} }
-    else if(e&&e.error_message){ if(err){err.textContent=e.error_message;err.style.display='block';} }
-    else if(DEV_BYPASS){ console.warn('save-data unreachable — DEV_BYPASS on, advancing.',e); next(); return; }
-    else if(err){ err.textContent='Something went wrong. Please try again.'; err.style.display='block'; }
-    btn.disabled=false; btn.textContent=btn.dataset.label||'Show my scorecard';
+    if(e&&e.error_code==='invalid_email'){if(err){err.textContent=e.error_message||'Enter a valid work email.';err.style.display='block';}}
+    else if(e&&e.error_message){if(err){err.textContent=e.error_message;err.style.display='block';}}
+    else if(DEV_BYPASS){console.warn('save-data unreachable \u2014 DEV_BYPASS on, advancing.',e);next();return;}
+    else if(err){err.textContent='Something went wrong. Please try again.';err.style.display='block';}
+    btn.disabled=false;btn.textContent=btn.dataset.label||'Show my scorecard';
   }
 }
 /* ==================== /BACKEND INTEGRATION ==================== */
 
 /* ================= ENGINE ================= */
 function paint(){
-  const scr=S[step];
+  var scr=S[step];
   document.getElementById('stage').innerHTML=scr.render();
-  const railEl=document.getElementById('rail');
-  railEl.innerHTML=(scr.stage!=null)?funnelRail(scr.stage,scr.qi):'';
-  const total=S.length-1,pctv=Math.round((step/total)*100);
-  const hero=!!scr.hero;
+  var railEl=document.getElementById('rail');
+  railEl.innerHTML=(scr.stage!=null)?funnelRail(scr.stage,scr.qi,QTOTAL):'';
+  var total=S.length-1,pctv=Math.round((step/total)*100),hero=!!scr.hero;
   document.getElementById('progbar').style.width=(hero?0:pctv)+'%';
   document.getElementById('pct').textContent=(hero?0:pctv)+'%';
-  const progEl=document.querySelector('.prog'),pctEl=document.getElementById('pct');
-  const vis=hero?'hidden':'visible';
-  if(progEl) progEl.style.visibility=vis;
-  if(pctEl) pctEl.style.visibility=vis;
+  var progEl=document.querySelector('.prog'),pctEl=document.getElementById('pct'),vis=hero?'hidden':'visible';
+  if(progEl)progEl.style.visibility=vis;
+  if(pctEl)pctEl.style.visibility=vis;
   document.getElementById('back').style.visibility=step>0?'visible':'hidden';
   window.scrollTo({top:0,behavior:'smooth'});
-  if(scr.onShow) scr.onShow();
+  if(scr.onShow)scr.onShow();
 }
-function next(){const s=S[step];if(s.onLeave)s.onLeave();if(step<S.length-1){step++;paint();}}
-function prev(){const s=S[step];if(s.onLeave)s.onLeave();if(step>0){step--;paint();}}
+function next(){var s=S[step];if(s.onLeave)s.onLeave();if(step<S.length-1){step++;paint();}}
+function prev(){var s=S[step];if(s.onLeave)s.onLeave();if(step>0){step--;paint();}}
 paint();
 
 ['click','scroll','touchstart','keydown'].forEach(function(ev){window.addEventListener(ev,registerLead,{once:true,passive:true});});
